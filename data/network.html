@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta charset="UTF-8"> 	
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+	<title>DL5 Network</title>
+	<meta id="viewport" name="viewport" content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+	<script src="javascript/jquery.js"></script>
+	<link href="https://fonts.googleapis.com/css?family=Comfortaa" rel="stylesheet"> 
+    <script type = "text/javascript" language = "javascript">
+
+$(document).ready(function() {
+		$.ajaxSetup( { cache: false } );
+		//importo file e divido i valori 
+		$.getJSON('rete.json', function(jd) {
+			console.log (jd);
+			for( i = 0; i < 4; i ++ ) {
+				ipdata = 'ip_' + i;
+				nmdata = 'nm_' + i;
+				gwdata = 'gw_' + i;
+				tip = "Tip_" + i;
+				//console.log(ipdata,jd.rete[0].ip[i]," - ",nmdata,jd.rete[0].netmask[i]," - ",gwdata,jd.rete[0].gateway[i],tip,jd.thermo[0].ip[i]);
+				document.getElementById (ipdata).value = jd.rete[0].ip[i];
+				document.getElementById (nmdata).value = jd.rete[0].netmask[i];
+				document.getElementById (gwdata).value = jd.rete[0].gateway[i];
+				//document.getElementById (tip).value = jd.thermo[0].ip[i];
+			}
+			if (jd.rete[0].dhcp== 0){
+				$('#dhcp').prop('checked', false);	
+				}
+			else{
+				$('#dhcp').prop('checked', true);
+			}
+			dhcp_on();/*
+			if (jd.thermo[0].on== 0){
+				$('#thermo').prop('checked', false);
+				}
+			else{
+				$('#thermo').prop('checked', true);
+			}
+			//thermo_on();*/
+			document.getElementById("ssid").value = 	jd.rete[0].ssid;
+			document.getElementById("password").value = 	jd.rete[0].pwd;
+			document.getElementById("hostname").value = 	jd.ap[0].hostname;
+			document.getElementById("httpusername").value = jd.ap[0].http_username;
+			document.getElementById("httppassword").value = jd.ap[0].http_password;
+			//document.getElementById("thermo_type").value= jd.thermo[0].type;
+			//document.getElementById("thermo_combo").value = jd.thermo[0].on
+			//document.getElementById("apssid").value = 	jd.ap[0].ap_ssid;
+			//document.getElementById("appassword").value = 	jd.ap[0].ap_password;
+					
+			
+			});
+		});
+
+function dhcp_on() {
+	if (document.getElementById ("dhcp").checked == true){
+			$("tr.statuscheck input, tr.statuscheck select, tr.statuscheck textarea").prop('disabled', true);
+        }
+        else{      	
+			$("tr.statuscheck input, tr.statuscheck select, tr.statuscheck textarea").prop('disabled', false);
+		}
+	}
+
+function validate(evt) {
+  	var theEvent = evt || window.event;
+        var key = theEvent.keyCode || theEvent.which;
+        if(key == 37 || key == 38 || key == 39 || key == 40 || key == 8 || key == 46) { // Left / Up / Right / Down Arrow, Backspace, Delete keys
+            return;
+        }
+ 	key = String.fromCharCode( key );
+  	var regex = /[0-9]|\./;
+  	if( !regex.test(key) ) {
+            theEvent.returnValue = false;
+            if(theEvent.preventDefault) theEvent.preventDefault();
+  	}
+}
+function savejson(){
+	sched_json = "";
+	sched1_json = "";
+	dhcp_1 = 0;
+	if (document.getElementById("dhcp").checked == true){
+		dhcp_1 = 1;
+		ip = "["+document.getElementById("ip_0").value+","+document.getElementById("ip_1").value+","+document.getElementById("ip_2").value+","+document.getElementById("ip_3").value+"]";
+		gateway = "["+document.getElementById("gw_0").value+","+document.getElementById("gw_1").value+","+document.getElementById("gw_2").value+","+document.getElementById("gw_3").value+"]";
+		netmask = "["+document.getElementById("nm_0").value+","+document.getElementById("nm_1").value+","+document.getElementById("nm_2").value+","+document.getElementById("nm_3").value+"]";
+		}
+	else{
+		dhcp_1 = 0;
+		ip = "["+document.getElementById("ip_0").value+","+document.getElementById("ip_1").value+","+document.getElementById("ip_2").value+","+document.getElementById("ip_3").value+"]";
+		gateway = "["+document.getElementById("gw_0").value+","+document.getElementById("gw_1").value+","+document.getElementById("gw_2").value+","+document.getElementById("gw_3").value+"]";
+		netmask = "["+document.getElementById("nm_0").value+","+document.getElementById("nm_1").value+","+document.getElementById("nm_2").value+","+document.getElementById("nm_3").value+"]";
+		}
+	sched_json = "{\"rete\":[{\"dhcp\":"+dhcp_1+",\"ip\":"+ip+",\"netmask\":"+netmask+",\"gateway\":"+gateway+",\"ssid\":\""+document.getElementById("ssid").value+"\",\"pwd\":\""+document.getElementById("password").value+"\"}],\"ap\":[{\"hostname\":\""+document.getElementById("hostname").value+"\",\"http_username\":\""+document.getElementById("httpusername").value+"\",\"http_password\":\""+document.getElementById("httppassword").value+"\"}]}";
+	window.location = "./setNetwork?"+sched_json ;
+    console.log(sched_json);	
+}
+</script>
+<style>
+body{
+	font-family: 'Comfortaa', cursive;
+}
+.centered-wrapper {
+    position: relative;
+    text-align: center;
+    background-color: rgba(211,199,238,1);
+
+}
+.centered-wrapper:before {
+    content: "";
+    position: relative;
+    display: inline-block;
+    width: 0; height: 100%;
+    vertical-align: middle;
+}
+.centered-content {
+    display: inline-block;
+    vertical-align: middle;
+}
+table {
+    margin: 0 auto;
+}
+th,tr	{
+	vertical-align:left;
+	text-align:left;
+}
+</style>
+
+</head>
+<body class="centered-wrapper">
+<strong>Configurazione WiFi</strong><br>
+
+        <div class="centered-content"></div>
+ 
+			<table border="0"  cellspacing="0" cellpadding="3" style="width:510px" >
+			<tr><td align="right">SSID:</td><td><input type="text" id="ssid" name="ssid" value="" title="Inserire Nome rete wifi"></td></tr>
+			<tr><td align="right">Password:</td><td><input type="text" id="password" name="password" value="" title = "Inserire Password Wifi"></td></tr>
+			<tr><td align="right">DHCP:</td><td><input type="checkbox" id="dhcp" name="dhcp" onchange=dhcp_on() title="Selezionare Ip Fisso o Dhcp"></td></tr>
+			<tr class="statuscheck"><td align="right">IP:     </td><td><input type="tel" id="ip_0" name="ip_0" maxlength="3" size="1" onkeypress='validate(event)'>.<input type="tel" id="ip_1" name="ip_1" maxlength="3" size="1" onkeypress='validate(event)'>.<input type="tel" id="ip_2" name="ip_2" maxlength="3" size="1" onkeypress='validate(event)'>.<input type="tel" id="ip_3" name="ip_3" value="" maxlength="3" size="1" onkeypress='validate(event)'></td></tr>
+			<tr class="statuscheck"><td align="right">Netmask:</td><td><input type="tel" id="nm_0" name="nm_0" maxlength="3" size="1" onkeypress='validate(event)'>.<input type="tel" id="nm_1" name="nm_1" maxlength="3" size="1" onkeypress='validate(event)'>.<input type="tel" id="nm_2" name="nm_2" smaxlength="3" size="1" onkeypress='validate(event)'>.<input type="tel" id="nm_3" name="nm_3" maxlength="3" size="1" onkeypress='validate(event)'></td></tr>
+                        <tr class="statuscheck"><td align="right">Gateway:</td><td><input type="tel" id="gw_0" name="gw_0" maxlength="3" size="1" onkeypress='validate(event)'>.<input type="tel" id="gw_1" name="gw_1" maxlength="3" size="1" onkeypress='validate(event)'>.<input type="tel" id="gw_2" name="gw_2" maxlength="3" size="1" onkeypress='validate(event)'>.<input type="tel" id="gw_3" name="gw_3" maxlength="3" size="1" onkeypress='validate(event)'></td></tr>
+			</table>
+			<hr width="510px"><strong>Access Point & Hostname</strong>
+			<table border="0"  cellspacing="0" cellpadding="3" style="width:510px" >
+			<tr><td align="right">http username:</td><td><input type="text" id="httpusername" name="httpusername" value="" title = "username Usata per Accesso"></td></tr>
+			<tr><td align="right">http password:</td><td><input type="text" id="httppassword" name="httppassword" value="" title = "Password di Accesso"></td></tr>
+			<tr><td align="right">hostname:</td><td><input type="text" id="hostname" name="hostname" value="" title = "Nome per OTA"></td></tr>
+			</table>
+			
+			<hr width="510px">
+			<table border="0"  cellspacing="0" cellpadding="3" style="width:510px" >
+			<tr height="10px"></tr>
+			<tr>
+			<td align="center"><input type="submit" style="width:200px" class="btn btn--m btn--blue" onclick="savejson();" value="Salva"></td>
+			<td align="center"><input type="submit" style="width:200px" class="btn btn--m btn--blue" onclick="window.location = './';" value="Home"></td>
+			</tr>
+			</table>
+		</div>
+		
+</body>
+
+
+
+

@@ -1,0 +1,1 @@
+{"rete":[{"dhcp":0,"ip":[192,168,1,160],"netmask":[255,255,255,0],"gateway":[192,168,1,1],"ssid":"wifi_ssd","pwd":"wifi_pwd"}],"ap":[{"hostname":"Thermostat","http_username":"admin","http_password":"admin"}]}

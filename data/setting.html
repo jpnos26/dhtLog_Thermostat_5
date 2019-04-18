@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta charset="UTF-8"> 	
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+	<title>DL5 Setting</title>
+	<meta id="viewport" name="viewport" content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+	<script src="javascript/jquery.js"></script>
+	<link href="https://fonts.googleapis.com/css?family=Comfortaa" rel="stylesheet"> 
+<script type = "text/javascript" language = "javascript">
+
+$(document).ready(function() {
+		$.ajaxSetup( { cache: false } );
+		//importo file e divido i valori 
+		$.getJSON('thermostat.json', function(jd) {
+			console.log (jd);
+			for( i = 0; i < 4; i ++ ) {
+				tip = "Tip_" + i;
+				document.getElementById (tip).value = jd.thermo[0].ip[i];
+			}
+			document.getElementById("thermo_type").value= jd.thermo[0].type;
+			document.getElementById("thermo_combo").value = jd.thermo[0].on;
+			document.getElementById("correct").value = jd.thermo[0].correct;		
+			
+			});
+		});
+
+function dhcp_on() {
+	if (document.getElementById ("dhcp").checked == true){
+			$("tr.statuscheck input, tr.statuscheck select, tr.statuscheck textarea").prop('disabled', true);
+        }
+        else{      	
+			$("tr.statuscheck input, tr.statuscheck select, tr.statuscheck textarea").prop('disabled', false);
+		}
+	}
+
+function validate(evt) {
+  	var theEvent = evt || window.event;
+        var key = theEvent.keyCode || theEvent.which;
+        if(key == 37 || key == 38 || key == 39 || key == 40 || key == 8 || key == 46) { // Left / Up / Right / Down Arrow, Backspace, Delete keys
+            return;
+        }
+ 	key = String.fromCharCode( key );
+  	var regex = /[0-9]|\./;
+  	if( !regex.test(key) ) {
+            theEvent.returnValue = false;
+            if(theEvent.preventDefault) theEvent.preventDefault();
+  	}
+}
+function savejson(){
+	sched_json = "";
+	sched1_json = "";
+    Tip = "["+document.getElementById("Tip_0").value+","+document.getElementById("Tip_1").value+","+document.getElementById("Tip_2").value+","+document.getElementById("Tip_3").value+"]";
+	//	}
+	sched_json = "{\"thermo\":[{\"ip\":"+Tip+",\"on\":"+document.getElementById("thermo_combo").value+",\"type\":"+document.getElementById("thermo_type").value+",\"correct\":"+document.getElementById("correct").value+"}]}";
+	window.location = "./setThermostat?"+sched_json ;
+    console.log(sched_json);	
+}
+</script>
+<style>
+body{
+	font-family: 'Comfortaa', cursive;
+}
+.centered-wrapper {
+    position: relative;
+    text-align: center;
+    background-color: rgba(211,199,238,1);
+
+}
+.centered-wrapper:before {
+    content: "";
+    position: relative;
+    display: inline-block;
+    width: 0; height: 100%;
+    vertical-align: middle;
+}
+.centered-content {
+    display: inline-block;
+    vertical-align: middle;
+}
+table {
+    margin: 0 auto;
+}
+th,tr	{
+	vertical-align:left;
+	text-align:left;
+}
+</style>
+
+</head>
+<body class="centered-wrapper">
+<strong>Configurazione DL5</strong><br>
+
+        <div class="centered-content"></div>
+ 			<hr width="510px">Thermostat Settings:
+			<table border="0"  cellspacing="0" cellpadding="3" style="width:510px" >
+			<tr>
+                <td align = "center" >
+                    <select name="thermo_list" id="thermo_combo">
+                        <option value="0">Thermostat Abilitato Attivo</option>
+                        <option value="1">Thermostat Abilitato Passivo</option>
+                        <option value="2">Thermostat Disabilitato</option>
+                    </select>
+                </td>
+            </tr>
+			<tr class="thermocheck">
+                <td align = "center">Ip:
+                    <input type="tel" id="Tip_0" name="Tip_0" maxlength="3" size="1" onkeypress='validate(event)'>.<input type="tel" id="Tip_1" name="Tip_1" maxlength="3" size="1" onkeypress='validate(event)'>.<input type="tel" id="Tip_2" name="Tip_2" maxlength="3" size="1" onkeypress='validate(event)'>.<input type="tel" id="Tip_3" name="Tip_3" value="" maxlength="3" size="1" onkeypress='validate(event)'>
+                </td>
+            </tr>
+			<tr class="thermocheck">
+                <td align = "center">Tipo: 
+                    <select id="thermo_type" name="Ttype">
+                        <option value="0">Temperatura Esterna</option>
+                        <option value="1">Rele Caldaia Remoto</option>
+                        <option value="2">Zona Controllata</option>
+                        <option value="3">Ir Estate/Inverno</option>
+                </td>
+            </tr>
+			</table>
+			<hr width="510px">
+			<table border="0"  cellspacing="0" cellpadding="3" style="width:510px" >
+			<tr><td align="center">Correzione Temperatura : 
+                <input type="tel" id="correct" maxlength = "4" size = "1">
+			<hr width="510px">
+			</td></tr>
+			</table>
+			<table border="0"  cellspacing="0" cellpadding="3" style="width:510px" >
+			<tr height="10px"></tr>
+			<tr>
+			<td align="center"><input type="submit" style="width:200px" class="btn btn--m btn--blue" onclick="savejson();" value="Salva"></td>
+			<td align="center"><input type="submit" style="width:200px" class="btn btn--m btn--blue" onclick="window.location = './';" value="Home"></td>
+			</tr>
+			</table>
+		</div>
+		
+</body>
+
+
+
+
